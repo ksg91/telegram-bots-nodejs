@@ -1,0 +1,31 @@
+{
+  "name": "telegram-bots-nodejs",
+  "version": "0.9.4",
+  "main": "expectingbot.js",
+  "dependencies": {
+    "cleverbot-node": "^0.2.1",
+    "node-telegram-bot-api": "^0.20.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codingquark/telegram-bots-nodejs.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot"
+  ],
+  "author": [
+    "Kishan Gor",
+    "Dhavan Vaidya"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codingquark/telegram-bots-nodejs/issues"
+  },
+  "homepage": "https://github.com/codingquark/telegram-bots-nodejs#readme",
+  "description": ""
+}
