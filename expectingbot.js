@@ -1,7 +1,8 @@
 var TelegramBot = require('node-telegram-bot-api');
+var Cleverbot = require('cleverbot-node');
 var fs = require('fs');
 
-var token = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
+var token = fs.readFileSync('telegram_token');
 
 var version = "0.9.4";
 
@@ -23,47 +24,18 @@ if(parseInt(lastCount)>=0) {
 
 var chippianID = -81071314;
 
-
-var Cleverbot = require('cleverbot-node');
-cleverbot = new Cleverbot;
+var cleverbot = new Cleverbot;
 
 // Setup polling way
 var bot = new TelegramBot(token, {polling: true});
-var normalText = [
-    "Bhencho, stop expecting",
-    "Mat expect kiya karo yar.",
-    "Abhi bhi expecting?",
-    "I definitely did not expect that!!!!!!11!",
-    "bc, expecting, expecting, expecting.",
-    "Jitna jyada expect karoge, utna jyada niraash hoge",
-    "Mat kar expect mere dost.",
-    "kisne bola tha expect karne ko?",
-    "Hatt sala.. expecting",
-    "I too expected that!",
-    "Tu expect hi karta rahe mere bhai",
-    "Tumse na ho payega.. mat kar expect",
-    "Kitna expect karega? Ab baby expect kar mera, tere pet me."
-];
 
-var irritatedText = [
-    "Meri le rahe ho?",
-    "Bus kar mere bhai",
-    "Stop it, fgt",
-    "Chutiye",
-    "STFU",
-    "Leave me alone.",
-    "Fuck off",
-    "Sale suvar, gadhe, makkaar."
-];
-
-var emojiIrritated = [
-    '(╯°□°）╯︵ ┻━┻',
-    '╭∩╮(-_-)╭∩╮',
-    '(ノಠ益ಠ)ノ彡┻━┻',
-    '┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻',
-    'ლ(ಠ益ಠლ)'
-];
-
+// Read all sentences from the file
+var sentences = JSON.parse(fs.readFileSync('sentences.json', 'utf-8'));
+// Store them in memory - separately
+var normalText = sentences.normal_text;
+var irritatedText = sentences.irritated_text;
+var emojiIrritated = sentences.irritated_emoji;
+var boredMessages = sentences.bored_text;
 
 var randomMessages = [];
 var maxRandomMessages = 1000;
@@ -71,15 +43,15 @@ var iMinRandomInterval = 30;
 var iMaxRandomInterval = 90;
 
 function storeMessage(msg) {
-    if(randomMessages.length>maxRandomMessages) {
+    if(randomMessages.length > maxRandomMessages) {
         randomMessages.shift();
     }
     randomMessages.push(msg);
 }
 
 function getRandomMessage() {
-    if(randomMessages.length>0) {
-        return randomMessages[Math.floor(Math.random()*randomMessages.length)];
+    if(randomMessages.length > 0) {
+        return randomMessages[Math.floor(Math.random() * randomMessages.length)];
     }
     else 
     {
@@ -98,30 +70,18 @@ function sendRandomMessage() {
 
         bot.sendMessage(chippianID, resp, { });
     }
-    setTimeout(sendRandomMessage, randomInterval*60*1000);
+    setTimeout(sendRandomMessage, randomInterval * 60 * 1000);
 
 }
 sendRandomMessage();
 
-
-var boredMessages = [
-    'What a useless group is this? I am getting bored!',
-    'All dead? Or nobody wants to talk to me? >.>',
-    'Will someone please expect something? For fuck\'s sake!',
-    'All die! I live',
-    'HELLO?',
-    'Please talk to me na baba.',
-    'Yadd nahi karte bus gand marne ka mann kare to aa jaate hai.',
-    'Let\'s dance! But expect something first'
-];
-
 var iBoredTime = 120;
 
 function sendBoredMessage() {
-    var interval = iBoredTime*60*1000;
+    var interval = iBoredTime * 60 * 1000;
     var nowTime = Date.now();
     if(nowTime - lastMessageTimestamp > interval) {
-        resp = boredMessages[Math.floor(Math.random()*boredMessages.length)]
+        resp = boredMessages[Math.floor(Math.random() * boredMessages.length)]
         bot.sendMessage(chippianID, resp, { });
         lastMessageTimestamp = Date.now();
     }
@@ -132,16 +92,15 @@ function sendBoredMessage() {
 sendBoredMessage();
 
 
-
 bot.on("message", function(msg) {
-    //console.log(msg);
-    if(typeof msg.text != "undefined" && msg.text !=''  && msg.text.substring(0,1)!="/") {
+
+    if(typeof msg.text != "undefined" && msg.text != ''  && msg.text.substring(0,1) != "/") {
         storeMessage(msg.text);        
     }
 
     //! Check if code contains mention to Expecting Bot or reply to Expecting Bot
 
-    if(msg.chat.id>0) {
+    if(msg.chat.id > 0) {
         //! That's a private message 
         var actualMessage = msg.text;
         Cleverbot.prepare(function(){
@@ -157,7 +116,7 @@ bot.on("message", function(msg) {
         });
     }
 
-    if(msg.text.substring(0, 13)=="@ExpectingBot") {
+    if(msg.text.substring(0, 13) == "@ExpectingBot") {
         //! Need to treat this
         var actualMessage = msg.text.substring(13);
         Cleverbot.prepare(function(){
@@ -174,7 +133,7 @@ bot.on("message", function(msg) {
     }
     else {
         if(typeof msg.reply_to_message != "undefined") {
-            if(msg.reply_to_message.from.username=="ExpectingBot") {
+            if(msg.reply_to_message.from.username == "ExpectingBot") {
                 //! Reply to bot's message
                 var actualMessage = msg.text;
                 Cleverbot.prepare(function(){
@@ -196,24 +155,21 @@ bot.on("message", function(msg) {
 
 bot.onText(/^(?!\/).*(expecting|expect)(.*)/, function (msg, match) {
     var nowTime = Date.now();
-
     if(nowTime - startedOn <= iInitialSilenceTime) {
         iExpectCount++;
         return;
     }
-
     var fromId = msg.chat.id;
     var message_id = msg.message_id;
-    var resp = normalText[Math.floor(Math.random()*normalText.length)];
+    var resp = normalText[Math.floor(Math.random() * normalText.length)];
 
 
     if(nowTime - lastMessageTimestamp <= irritationTime) {
-        resp = irritatedText[Math.floor(Math.random()*irritatedText.length)]+" "+emojiIrritated[Math.floor(Math.random()*emojiIrritated.length)];
+        resp = irritatedText[Math.floor(Math.random() * irritatedText.length)] + " " + emojiIrritated[Math.floor(Math.random() * emojiIrritated.length)];
     }
 
     lastMessageTimestamp = Date.now();
     iExpectCount++;
-
     bot.sendMessage(fromId, resp, {
         reply_to_message_id: message_id
     });
@@ -286,7 +242,7 @@ bot.onText(/ok([a-z]*)Raj/i, function (msg, match) {
 bot.onText(/\/version/, function (msg, match) {
     var fromId = msg.chat.id;
     var message_id = msg.message_id;
-    var resp = "Current Version is v"+version;
+    var resp = "Current Version is v" + version;
     bot.sendMessage(fromId, resp, {
         reply_to_message_id: message_id
     });
@@ -334,7 +290,7 @@ bot.onText(/\/expect/, function (msg, match) {
 bot.onText(/\/count/, function (msg, match) {
     var fromId = msg.chat.id;
     var message_id = msg.message_id;
-    var resp = "People have expected "+iExpectCount+" times so far. This is why people get depressed.";
+    var resp = "People have expected " + iExpectCount + " times so far. This is why people get depressed.";
     bot.sendMessage(fromId, resp, {
         reply_to_message_id: message_id
     });
