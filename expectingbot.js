@@ -72,7 +72,7 @@ var iMaxRandomInterval = 90;
 
 function storeMessage(msg) {
     if(randomMessages.length>maxRandomMessages) {
-        randomMessages.shitf();
+        randomMessages.shift();
     }
     randomMessages.push(msg);
 }
@@ -145,15 +145,15 @@ bot.on("message", function(msg) {
         //! That's a private message 
         var actualMessage = msg.text;
         Cleverbot.prepare(function(){
-          cleverbot.write(actualMessage, function (response) {
-               var actualResponse = response.message;
-               var fromId = msg.chat.id;
+            cleverbot.write(actualMessage, function (response) {
+                var actualResponse = response.message;
+                var fromId = msg.chat.id;
                 var message_id = msg.message_id;
                 bot.sendMessage(fromId, actualResponse, {
                     reply_to_message_id: message_id
                 });
                 lastMessageTimestamp = Date.now();
-          });
+            });
         });
     }
 
@@ -161,15 +161,15 @@ bot.on("message", function(msg) {
         //! Need to treat this
         var actualMessage = msg.text.substring(13);
         Cleverbot.prepare(function(){
-          cleverbot.write(actualMessage, function (response) {
-               var actualResponse = response.message;
-               var fromId = msg.chat.id;
+            cleverbot.write(actualMessage, function (response) {
+                var actualResponse = response.message;
+                var fromId = msg.chat.id;
                 var message_id = msg.message_id;
                 bot.sendMessage(fromId, actualResponse, {
                     reply_to_message_id: message_id
                 });
                 lastMessageTimestamp = Date.now();
-          });
+            });
         });
     }
     else {
@@ -178,15 +178,15 @@ bot.on("message", function(msg) {
                 //! Reply to bot's message
                 var actualMessage = msg.text;
                 Cleverbot.prepare(function(){
-                  cleverbot.write(actualMessage, function (response) {
-                       var actualResponse = response.message;
-                       var fromId = msg.chat.id;
+                    cleverbot.write(actualMessage, function (response) {
+                        var actualResponse = response.message;
+                        var fromId = msg.chat.id;
                         var message_id = msg.message_id;
                         bot.sendMessage(fromId, actualResponse, {
                             reply_to_message_id: message_id
                         });
                         lastMessageTimestamp = Date.now();
-                  });
+                    });
                 });
             }
         }
@@ -240,7 +240,7 @@ bot.onText(/\/start/, function (msg, match) {
 
 bot.onText(/(.*)okBotRaj(.*)/i, function (msg, match) {
     var nowTime = Date.now();
-        if(nowTime - startedOn <= iInitialSilenceTime) {
+    if(nowTime - startedOn <= iInitialSilenceTime) {
         iExpectCount++;
         return;
     }
@@ -255,7 +255,7 @@ bot.onText(/(.*)okBotRaj(.*)/i, function (msg, match) {
 
 bot.onText(/(.+)pls/i, function (msg, match) {
     var nowTime = Date.now();
-        if(nowTime - startedOn <= iInitialSilenceTime) {
+    if(nowTime - startedOn <= iInitialSilenceTime) {
         iExpectCount++;
         return;
     }
@@ -270,7 +270,7 @@ bot.onText(/(.+)pls/i, function (msg, match) {
 
 bot.onText(/ok([a-z]*)Raj/i, function (msg, match) {
     var nowTime = Date.now();
-        if(nowTime - startedOn <= iInitialSilenceTime) {
+    if(nowTime - startedOn <= iInitialSilenceTime) {
         iExpectCount++;
         return;
     }
@@ -342,7 +342,7 @@ bot.onText(/\/count/, function (msg, match) {
 
 bot.onText(/kimochi warui/i, function (msg, match) {
     var nowTime = Date.now();
-        if(nowTime - startedOn <= iInitialSilenceTime) {
+    if(nowTime - startedOn <= iInitialSilenceTime) {
         iExpectCount++;
         return;
     }
