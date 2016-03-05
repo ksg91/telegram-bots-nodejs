@@ -2,8 +2,7 @@ var TelegramBot = require('node-telegram-bot-api');
 var Cleverbot = require('cleverbot-node');
 var fs = require('fs');
 
-var token = fs.readFileSync('telegram_token');
-
+var token = JSON.parse(fs.readFileSync('telegram_token')).token;
 var version = "0.9.4";
 
 var iExpectCount = 0;
